@@ -18,6 +18,7 @@ const packageMock = {
     "test": "mocha"
   },
   "keywords": [
+    "promise",
     "mocha",
     "sinon",
     "logging",
@@ -27,14 +28,19 @@ const packageMock = {
     "appenders",
     "node"
   ],
+  "homepage": "https://github.com/jman717/promise-appenders",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jman717/promise-appenders.git"
+  },
   "deprecated": false,
-  "description": "Module cross check tests via mocha.",
+  "description": "Extend the functionality of promises with configurable appenders.",
   "email": "jrman@risebroadband.net",
   "license": "ISC",
   "main": "app.js",
   "name": "mocha-healthcheck",
   "start": "node app.js",
-  "version": "1.0.0"
+  "version": "0.0.1"
 }
 
 describe('package.json', function () {
