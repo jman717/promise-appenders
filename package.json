@@ -34,7 +34,7 @@
   "email": "jrman@risebroadband.net",
   "license": "ISC",
   "main": "app.js",
-  "name": "mocha-healthcheck",
+  "name": "promise-appenders",
   "start": "node app.js",
   "version": "0.0.1"
 }
