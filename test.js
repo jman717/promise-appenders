@@ -1,68 +1,71 @@
 
 var colors = require('colors'),
-    pro_appenders = require('./app.js')
-
-
-console.log('promise test 10.00')
-/*
-var atst = new pro_appenders().set({"environment": "test"})
-var atst2 = new pro_appenders().set({"environment": "production"})
-atst.getX(data => {
-    console.log('jrm debug 14(' + data + ')')
-})
-atst.on('environment', function(env) {
-    console.log('jrm debug 16(' + env + ')')
-}).then( resolve => {
-    console.log('jrm debug resolve 10.00(' + resolve + ')')
-}, reject => {
-    console.log('jrm debug reject 20.00(' + reject + ')')
-})
-
-atst.on('environment', function(env) {
-    console.log('jrm debug 17(' + env + ')')
-}).on('resolve', function(resolve) {
-    console.log('jrm debug 17 resolve(' + resolve + ')')
-}).on('reject', function(reject) {
-    console.log('jrm debug 17 reject(' + reject + ')')
-}).on('start_timer', function(data) {
-    console.log('jrm debug 17 start_timer data(' + data + ')')
-})
-*/
+    pro_appenders = require('./app.js'),
+    log, lne
 
 atst = new pro_appenders().set({
     "appenders": [
         { "type": "environment", "name": "test" },
+        { "type": "log4js-tagline", "name": "logging" },
         { "type": "promise", "name": "a_promise" },
-        { "type": "time-tracker", "name": "time" }
+        { "type": "time-tracker", "name": "time-track" }
     ]
 })
     .on({
+        "name": "logging", "event": "init", "callback": lg => {
+            lg.log4js.configure({
+                appenders: { myLog: { type: 'file', filename: 'my.log' } },
+                categories: { default: { appenders: ['myLog'], level: 'debug' } }
+            })
+
+            lg.tagline = new lg.log4js_tagline(lg.log4js, {
+                "display": ["trace", "debug", "info", "warn", "error", "fatal", "mark"],
+                "output": {
+                    "to_console": { "show": true, "color": "bgBlue" },      /* send output to console.log */
+                    "to_local_file": true,   /* send output to the local file */
+                    "to_datadog": false        /* send output to datadog (when the datadog appender is configured) */
+                }
+            })
+
+            lg.log = lg.log4js.getLogger('myLog')
+            lg.log.level = 'debug'
+            log = lg.log
+
+            append = lg.tagline.appender('line')
+            lne = new append(lg.tagline).setConfig({ "format": "lne(@name(): @file:@line:@column)" })
+            append = lg.tagline.appender('error')
+        }
+    })
+    .on({
         "name": "a_promise", "event": "reject", "callback": json_data => {
-            console.log('promise reject json(' + JSON.stringify(json_data) + ')')
+            log.error('promise reject json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
     .on({
         "name": "a_promise", "event": "resolve", "callback": json_data => {
-            console.log('promise resolve json(' + JSON.stringify(json_data) + ')')
+            log.info('promise resolve json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
     .on({
-        "name": "time", "event": "start", "callback": json_data => {
-            console.log('time start json(' + JSON.stringify(json_data) + ')')
+        "name": "time-track", "event": "start", "callback": json_data => {
+            log.debug('time start json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
     .on({
-        "name": "time", "event": "stop", "callback": json_data => {
-            console.log('time stop json(' + JSON.stringify(json_data) + ')')
+        "name": "time-track", "event": "stop", "callback": json_data => {
+            log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
-atst.do({ "name": "time", "event": "start", "message": "start" })
+atst.do({ "name": "logging", "event": "init", "message": "init" })
+    .do({ "name": "time-track", "event": "start", "message": "start" })
+
 setTimeout(function () {
-    atst.do({ "name": "time", "event": "stop", "message": "stop" })
 
     atst.main(data => {
         try {
-            data.message = "put some individualized message here"
+            //process coding goes on here. When complete stop the timer
+            atst.do({ "name": "time-track", "event": "stop", "message": "stop" })
+            data.message = "promise test done"
             //code goes here
             //throw new Error('some error thrown here')
             atst.do({ "name": "a_promise", "event": "resolve", "message": data })
@@ -70,14 +73,5 @@ setTimeout(function () {
             atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
         }
     })
-}, 2500)
+}, 500)
 
-
-//atst.reject('not so cool')
-/*
-atst.resolve('cool')
-atst.start_timer('cool start timer')
-atst.environment()
-atst.reject('rejected')
-*/
-console.log('promise test done')

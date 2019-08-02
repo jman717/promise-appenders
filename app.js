@@ -14,45 +14,9 @@ module.exports = class promise_appenders {
         t.appenders_array = []
         t.appenders_dir = './lib/appenders/'
         t.message = "default message"
-        try {
-            console.log('jrm debug appenders')
-            /*
-            if (promise_appenders.singleton) {
-                return promise_appenders.singleton
-            }
-            */
-
-            /*
-            Promise.prototype.say_what = function () {
-                console.log('jrm debug 10.01 say_what')
-            }
-            console.log('jrm debug 9.00(' + typeof Promise.say_what + ')')
-            console.log('jrm debug goo1(' + typeof Promise.prototype['goober'] + ')')
-            
-            Promise.prototype['goober'] = function goober() {console.log('jrm debug goober')}
-           t.promise = new Promise(function (resolve, reject) {
-                t.resolve = resolve
-                t.reject = reject
-                //this.goober('Success!');
-            }).then(data => {
-                console.log('jrm debug resolve(' + data + ')')
-            },
-                reject => {
-                    console.log('jrm debug reject(' + reject + ')')
-                }
-            )
-            */
-
-            //t.promise.goober()
-            return t
-            /*
-            promise_appenders.singleton = t
-            return promise_appenders.singleton
-            */
-        } catch (e) {
-            e.message = "promise_appenders.constructor error: " + e.message
-            console.log(e.message.red)
-        }
+        t.summary = { "message": "" }
+        t.logging = function(m){console.log(m)}
+        return t
     }
 
     set({ appenders, message }) {
@@ -79,7 +43,6 @@ module.exports = class promise_appenders {
                 })
             }
             if (message != null) {
-                console.log('jrm debug 77(' + message + ')')
                 t.message = message
             }
             return t
@@ -100,7 +63,6 @@ module.exports = class promise_appenders {
             if (typeof callback == 'undefined')
                 throw new Error('callback is undefined')
             element = t.getByName(name)
-            console.log('jrm debug 22.33(' + JSON.stringify(arguments) + ')')
             element.set({ event, callback })
             return t
         } catch (e) {
@@ -116,10 +78,8 @@ module.exports = class promise_appenders {
             if (typeof name == 'undefined')
                 throw new Error('name is undefined')
             for (let i = 0; i < t.appenders_array.length; i++) {
-                if (t.appenders_array[i].name == name) {
-                    console.log('jrm debug GOT A HOT ONE(' + name + ')')
+                if (t.appenders_array[i].name == name)
                     return t.appenders_array[i]
-                }
             }
             throw new Error('not found(' + name + ')')
         } catch (e) {
@@ -135,10 +95,8 @@ module.exports = class promise_appenders {
             if (typeof type == 'undefined')
                 throw new Error('type is undefined')
             for (let i = 0; i < t.appenders_array.length; i++) {
-                if (t.appenders_array[i].type == type) {
-                    console.log('jrm debug GOT A HOT TYPE(' + type + ')')
+                if (t.appenders_array[i].type == type) 
                     return t.appenders_array[i]
-                }
             }
             return null
         } catch (e) {
@@ -172,31 +130,15 @@ module.exports = class promise_appenders {
         try {
             if (typeof callback == 'undefined')
                 throw new Error('callback is undefined')
-            data = { "message": t.message}
-            environment = t.getByType('environment')
-            data.environment = (environment == null) ? 'na' : environment.name
-            promise = t.getByType('promise')
-            data.promise = {"name": ""}
-            data.promise.name = (promise == null) ? 'na' : promise.name
-            time = t.getByType('time-tracker')
-            data.time = (time == null) ? 'na' : time.time
-            callback(data)
+            for (let i = 0; i < t.appenders_array.length; i++)
+                t.summary = Object.assign(t.summary, t.appenders_array[i].summary)
+
+            callback(t.summary)
         } catch (e) {
             e.message = "promise_appenders.do error: " + e.message
             console.log(e.message)
             throw (e)
         }
     }
-    /*
-    on(what, callback) {
-        var t = this, what_callback
-        t[what + '_callback'] = callback
-        return t
-        /*
-        var environmentX = 'somethingX'
-        console.log('jrm debug 13.01(' + typeof callback + ')')
-        */ /*
-}
-*/
 }
 
