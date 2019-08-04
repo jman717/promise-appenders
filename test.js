@@ -21,7 +21,17 @@ atst = new pro_appenders().set({
             lg.tagline = new lg.log4js_tagline(lg.log4js, {
                 "display": ["trace", "debug", "info", "warn", "error", "fatal", "mark"],
                 "output": {
-                    "to_console": { "show": true, "color": "bgBlue" },      /* send output to console.log */
+                    "to_console": {
+                        "show": true, "color": {
+                            "trace": "blue",
+                            "debug": "bgCyan",
+                            "info": "blue",
+                            "warn": "yellow",
+                            "error": "red",
+                            "fatal": "red",
+                            "mark": "white"
+                        }
+                    },      /* send output to console.log */
                     "to_local_file": true,   /* send output to the local file */
                     "to_datadog": false        /* send output to datadog (when the datadog appender is configured) */
                 }
@@ -30,6 +40,7 @@ atst = new pro_appenders().set({
             lg.log = lg.log4js.getLogger('myLog')
             lg.log.level = 'debug'
             log = lg.log
+            lg.parent.log = lg.log
 
             append = lg.tagline.appender('line')
             lne = new append(lg.tagline).setConfig({ "format": "lne(@name(): @file:@line:@column)" })
@@ -64,11 +75,13 @@ setTimeout(function () {
     atst.main(data => {
         try {
             //process coding goes on here. When complete stop the timer
+            atst.log.info('This is start of test').tagline()
             atst.do({ "name": "time-track", "event": "stop", "message": "stop" })
             data.message = "promise test done"
             //code goes here
             //throw new Error('some error thrown here')
             atst.do({ "name": "a_promise", "event": "resolve", "message": data })
+            atst.log.info('This is the end of test').tagline()
         } catch (e) {
             atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
         }

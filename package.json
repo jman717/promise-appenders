@@ -5,7 +5,7 @@
   "bundleDependencies": false,
   "dependencies": {
     "colors": "*",
-    "log4js-tagline": "^2.2.0",
+    "log4js-tagline": "^2.2.1",
     "mocha": "^6.2.0",
     "sinon": "^7.3.2"
   },

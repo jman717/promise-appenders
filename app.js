@@ -15,7 +15,10 @@ module.exports = class promise_appenders {
         t.appenders_dir = './lib/appenders/'
         t.message = "default message"
         t.summary = { "message": "" }
-        t.logging = function(m){console.log(m)}
+        t.log = Object;
+        ["trace", "debug", "info", "warn", "error", "fatal", "mark"].forEach(name => {
+            t.log[name] = function (m) { console.log(m.yellow) }
+        })
         return t
     }
 
@@ -39,16 +42,17 @@ module.exports = class promise_appenders {
                     r = require(a)
                     o = new r(element)
                     t.appenders_array.push(o)
-                    console.log('tagline appender file loading=' + a.green)
+                    t.log.info('promise_appenders loading=' + a)
                 })
             }
             if (message != null) {
                 t.message = message
             }
+            //t.log.error('jrm debug 10.00 this message should be red').tagline()
             return t
         } catch (e) {
             e.message = "promise_appenders app.js appender error: " + e.message
-            console.log(e.message.red)
+            t.log.error(e.message)
             throw (e)
         }
     }
@@ -95,7 +99,7 @@ module.exports = class promise_appenders {
             if (typeof type == 'undefined')
                 throw new Error('type is undefined')
             for (let i = 0; i < t.appenders_array.length; i++) {
-                if (t.appenders_array[i].type == type) 
+                if (t.appenders_array[i].type == type)
                     return t.appenders_array[i]
             }
             return null
