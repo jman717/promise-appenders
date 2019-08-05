@@ -9,10 +9,11 @@ const packageMock = {
   "bundleDependencies": false,
   "dependencies": {
     "colors": "*",
-    "log4js-tagline": "^2.1.15",
+    "log4js-tagline": "^2.2.1",
     "mocha": "^6.2.0",
     "sinon": "^7.3.2"
   },
+  
   "scripts": {
     "start": "node app.js",
     "test": "mocha"
@@ -38,9 +39,9 @@ const packageMock = {
   "email": "jrman@risebroadband.net",
   "license": "ISC",
   "main": "app.js",
-  "name": "mocha-healthcheck",
+  "name": "promise-appenders",
   "start": "node app.js",
-  "version": "0.0.1"
+  "version": "1.0.0"
 }
 
 describe('package.json', function () {

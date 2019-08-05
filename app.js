@@ -42,13 +42,12 @@ module.exports = class promise_appenders {
                     r = require(a)
                     o = new r(element)
                     t.appenders_array.push(o)
-                    t.log.info('promise_appenders loading=' + a)
+                    console.log('promise_appenders loading=' + a.yellow)
                 })
             }
             if (message != null) {
                 t.message = message
             }
-            //t.log.error('jrm debug 10.00 this message should be red').tagline()
             return t
         } catch (e) {
             e.message = "promise_appenders app.js appender error: " + e.message
@@ -136,11 +135,10 @@ module.exports = class promise_appenders {
                 throw new Error('callback is undefined')
             for (let i = 0; i < t.appenders_array.length; i++)
                 t.summary = Object.assign(t.summary, t.appenders_array[i].summary)
-
+console.log('jrm debug 12.22')
             callback(t.summary)
         } catch (e) {
             e.message = "promise_appenders.do error: " + e.message
-            console.log(e.message)
             throw (e)
         }
     }

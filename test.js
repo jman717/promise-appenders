@@ -1,3 +1,8 @@
+/*
+* @author Jim Manton: jrman@risebroadband.net
+* @since 2019-07-19
+* Test with log4js-tagline, promises, time-tracker appenders
+*/
 
 var colors = require('colors'),
     pro_appenders = require('./app.js'),
@@ -40,11 +45,17 @@ atst = new pro_appenders().set({
             lg.log = lg.log4js.getLogger('myLog')
             lg.log.level = 'debug'
             log = lg.log
-            lg.parent.log = lg.log
 
             append = lg.tagline.appender('line')
             lne = new append(lg.tagline).setConfig({ "format": "lne(@name(): @file:@line:@column)" })
             append = lg.tagline.appender('error')
+            err = new append(lg.tagline)
+            log.info('this is an info line').tag(lne).tagline()
+            try {
+                throw new Error('Some error is thrown here.')
+            } catch (e) {
+                log.error('error line goes here').tag(err.setError(e)).tag(lne).tagline()
+            }
         }
     })
     .on({
