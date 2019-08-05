@@ -135,8 +135,8 @@ module.exports = class promise_appenders {
                 throw new Error('callback is undefined')
             for (let i = 0; i < t.appenders_array.length; i++)
                 t.summary = Object.assign(t.summary, t.appenders_array[i].summary)
-console.log('jrm debug 12.22')
-            callback(t.summary)
+
+                callback(t.summary)
         } catch (e) {
             e.message = "promise_appenders.do error: " + e.message
             throw (e)

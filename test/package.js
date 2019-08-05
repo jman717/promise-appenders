@@ -13,7 +13,7 @@ const packageMock = {
     "mocha": "^6.2.0",
     "sinon": "^7.3.2"
   },
-  
+
   "scripts": {
     "start": "node app.js",
     "test": "mocha"
@@ -41,7 +41,7 @@ const packageMock = {
   "main": "app.js",
   "name": "promise-appenders",
   "start": "node app.js",
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
 
 describe('package.json', function () {
