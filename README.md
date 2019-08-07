@@ -3,10 +3,10 @@ Extend the functionality of promises with configurable appenders.
 
 Included appenders:
 
-* promise - a promise
+* promise - a basic promise
 * log4js-tagline - log to file, console, to datadog
 * environment - define what environment you're dealing with (example: test, stage, or production)
-* time-tracker - how long does a loop take to complete
+* time-tracker - Start the timer, stop the timer. How long does it take to complete a task, a loop, a process.
 
 Installation
 ---------
@@ -105,6 +105,7 @@ atst = new pro_appenders().set({
             log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
+    
 atst.do({ "name": "logging", "event": "init", "message": "init" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
 

@@ -35,6 +35,7 @@ atst = new pro_appenders().set({
             console.log('time stop json(' + JSON.stringify(json_data) + ')')
         }
     })
+
 atst.do({ "name": "time-track", "event": "start", "message": "start" })
 
 setTimeout(function () {
@@ -53,5 +54,5 @@ setTimeout(function () {
             atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
         }
     })
-}, 500)
+}, 2500)
 

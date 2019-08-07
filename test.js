@@ -78,6 +78,7 @@ atst = new pro_appenders().set({
             log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
+    
 atst.do({ "name": "logging", "event": "init", "message": "init" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
 
@@ -97,5 +98,5 @@ setTimeout(function () {
             atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
         }
     })
-}, 500)
+}, 1500)
 

@@ -87,7 +87,6 @@ module.exports = class promise_appenders {
             throw new Error('not found(' + name + ')')
         } catch (e) {
             e.message = "promise_appenders.getByName error: " + e.message
-            console.log(e.message.red)
             throw (e)
         }
     }
@@ -136,7 +135,7 @@ module.exports = class promise_appenders {
             for (let i = 0; i < t.appenders_array.length; i++)
                 t.summary = Object.assign(t.summary, t.appenders_array[i].summary)
 
-                callback(t.summary)
+            callback(t.summary)
         } catch (e) {
             e.message = "promise_appenders.do error: " + e.message
             throw (e)

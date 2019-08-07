@@ -1,4 +1,5 @@
-var assert = require('assert')
+var assert = require('assert'),
+    sinon = require('sinon')
 
 describe('app', function () {
     var app, tapp
@@ -60,11 +61,13 @@ describe('app', function () {
         assert(app.getByType("promise"))
     })
 
-    it('app.main should fail without parameters', function () {
+    it('app.main should fail without callback', function () {
         assert.throws(obj => app.main(), Error)
     })
 
-    it('app.main should pass with parameters', function () {
-        assert(obj => app.main(function (v) { }))
+    it('app.main should pass with callback', function () {
+        var callback = sinon.stub()
+        callback.returns(assert(true))
+        app.main(callback)
     })
 })
