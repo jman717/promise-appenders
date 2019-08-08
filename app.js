@@ -117,7 +117,6 @@ module.exports = class promise_appenders {
                 throw new Error('event is undefined')
             if (typeof message == 'undefined')
                 throw new Error('message is undefined')
-            console.log('jrm debug name(' + name + ')')
             element = t.getByName(name)
             element.do({ event, message })
             return t
