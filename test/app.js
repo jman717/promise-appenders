@@ -61,13 +61,15 @@ describe('app', function () {
         assert(app.getByType("promise"))
     })
 
-    it('app.main should fail without callback', function () {
+    it('app.getSummary should fail without callback', function () {
         assert.throws(obj => app.main(), Error)
     })
 
-    it('app.main should pass with callback', function () {
-        var callback = sinon.stub()
-        callback.returns(assert(true))
-        app.main(callback)
+    it('app.getSummary should pass with parameters', function () {
+        assert(app.getSummary({ "include": [], "message": "some message" }))
+    })
+    
+    it('app.getSummary should pass with all for include', function () {
+        assert(app.getSummary({ "include": "all", "message": "some message" }))
     })
 })

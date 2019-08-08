@@ -117,6 +117,7 @@ module.exports = class promise_appenders {
                 throw new Error('event is undefined')
             if (typeof message == 'undefined')
                 throw new Error('message is undefined')
+            console.log('jrm debug name(' + name + ')')
             element = t.getByName(name)
             element.do({ event, message })
             return t
@@ -127,15 +128,26 @@ module.exports = class promise_appenders {
         }
     }
 
-    main(callback) {
+    getSummary({ include, message }) {
         var t = this, data, environment, promise, time
         try {
-            if (typeof callback == 'undefined')
-                throw new Error('callback is undefined')
-            for (let i = 0; i < t.appenders_array.length; i++)
-                t.summary = Object.assign(t.summary, t.appenders_array[i].summary)
+            if (typeof include == 'undefined')
+                throw new Error('include undefined')
+            if (typeof message == 'undefined')
+                throw new Error('message undefined')
+            t.summary = [{ "message": message }]
+            if (include == 'all') {
+                for (let i = 0; i < t.appenders_array.length; i++)
+                    t.summary.push(t.appenders_array[i].summary)
+            } else {
+                include.forEach(itm => {
+                    for (let i = 0; i < t.appenders_array.length; i++)
+                        if (itm == t.appenders_array[i].name)
+                            t.summary.push(t.appenders_array[i].summary)
+                })
+            }
 
-            callback(t.summary)
+            return t.summary
         } catch (e) {
             e.message = "promise_appenders.do error: " + e.message
             throw (e)

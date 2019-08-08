@@ -40,6 +40,8 @@ atst = new pro_appenders().set({
         { "type": "environment", "name": "test" },
         { "type": "log4js-tagline", "name": "logging" },
         { "type": "promise", "name": "a_promise" },
+        { "type": "promise", "name": "another_promise" },
+        { "type": "time-tracker", "name": "time-track-second" },
         { "type": "time-tracker", "name": "time-track" }
     ]
 })
@@ -61,7 +63,7 @@ atst = new pro_appenders().set({
                             "warn": "yellow",
                             "error": "red",
                             "fatal": "red",
-                            "mark": "white"
+                            "mark": "bgBlue"
                         }
                     },      /* send output to console.log */
                     "to_local_file": true,   /* send output to the local file */
@@ -86,6 +88,16 @@ atst = new pro_appenders().set({
         }
     })
     .on({
+        "name": "another_promise", "event": "reject", "callback": json_data => {
+            log.error('promise reject json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
+        }
+    })
+    .on({
+        "name": "another_promise", "event": "resolve", "callback": json_data => {
+            log.mark('promise resolve json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
+        }
+    })
+    .on({
         "name": "a_promise", "event": "reject", "callback": json_data => {
             log.error('promise reject json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
@@ -105,27 +117,44 @@ atst = new pro_appenders().set({
             log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
-    
+    .on({
+        "name": "time-track-second", "event": "start", "callback": json_data => {
+            log.debug('time start json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
+        }
+    })
+    .on({
+        "name": "time-track-second", "event": "stop", "callback": json_data => {
+            log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
+            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-second"], "message": "another_promise test done"})})
+        }
+    })
+
 atst.do({ "name": "logging", "event": "init", "message": "init" })
+    .do({ "name": "time-track-second", "event": "start", "message": "start" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
 
 setTimeout(function () {
 
-    atst.main(data => {
-        try {
-            //process coding goes on here. When complete stop the timer
-            atst.log.info('This is start of test').tagline()
-            atst.do({ "name": "time-track", "event": "stop", "message": "stop" })
-            data.message = "promise test done"
-            //code goes here
-            //throw new Error('some error thrown here')
-            atst.do({ "name": "a_promise", "event": "resolve", "message": data })
-            atst.log.info('This is the end of test').tagline()
-        } catch (e) {
-            atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
-        }
-    })
-}, 500)  
+    try {
+        atst.log.info('This is start of test').tagline()
+        //process coding goes here. When complete stop the timer
+        atst.do({ "name": "time-track", "event": "stop", "message": "stop" })
+        setTimeout(function () {
+            try {
+                //some other processing is done. When finished stop the second timer
+                atst.do({ "name": "time-track-second", "event": "stop", "message": "stop" })
+            } catch (e) {
+                atst.do({ "name": "another_promise", "event": "reject", "message": e.message })
+            }
+        }, 800)
+        //throw new Error('some error thrown here')
+        //atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": ["a_promise", "time-track"], "message": "a_promise test done"})})
+        atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": "all", "message": "a_promise test done with all parameter"})})  //include: all will give you all summaries
+        atst.log.info('This is the end of test').tagline()
+    } catch (e) {
+        atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
+    }
+}, 1500)  
 
 ....
 ```
