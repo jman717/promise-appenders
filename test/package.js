@@ -40,7 +40,7 @@ const packageMock = {
   "main": "app.js",
   "name": "promise-appenders",
   "start": "node app.js",
-  "version": "1.1.2"
+  "version": "1.2.0"
 }
 
 describe('package.json', function () {

@@ -6,7 +6,7 @@
 
 var colors = require('colors'),
     pro_appenders = require('./app.js'),
-    log, lne
+    log, lne, cfu, tcf
 
 atst = new pro_appenders().set({
     "appenders": [
@@ -58,6 +58,9 @@ atst = new pro_appenders().set({
             } catch (e) {
                 log.error('error line goes here').tag(err.setError(e)).tag(lne).tagline()
             }
+
+            append = lg.tagline.appender('class_function')
+            cfu = new append(lg.tagline)
         }
     })
     .on({
@@ -98,13 +101,21 @@ atst = new pro_appenders().set({
     .on({
         "name": "time-track-second", "event": "stop", "callback": json_data => {
             log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
-            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-second"], "message": "another_promise test done"})})
+            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-second"], "message": "another_promise test done" }) })
         }
     })
 
 atst.do({ "name": "logging", "event": "init", "message": "init" })
     .do({ "name": "time-track-second", "event": "start", "message": "start" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
+
+class testClass {
+    test_function() {
+        atst.log.debug('This will display the class/function name.').tag(cfu).tagline()
+    }
+}
+
+tcf = new testClass
 
 setTimeout(function () {
 
@@ -114,6 +125,7 @@ setTimeout(function () {
         atst.do({ "name": "time-track", "event": "stop", "message": "stop" })
         setTimeout(function () {
             try {
+                tcf.test_function() //show how the debug will log the name of the class/function
                 //some other processing is done. When finished stop the second timer
                 atst.do({ "name": "time-track-second", "event": "stop", "message": "stop" })
             } catch (e) {
@@ -122,7 +134,7 @@ setTimeout(function () {
         }, 800)
         //throw new Error('some error thrown here')
         //atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": ["a_promise", "time-track"], "message": "a_promise test done"})})
-        atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": "all", "message": "a_promise test done with all parameter"})})  //include: all will give you all summaries
+        atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": "all", "message": "a_promise test done with all parameter" }) })  //include: all will give you all summaries
         atst.log.info('This is the end of test').tagline()
     } catch (e) {
         atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
