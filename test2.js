@@ -13,8 +13,8 @@ atst = new pro_appenders().set({
         { "type": "environment", "name": "test" },
         { "type": "promise", "name": "a_promise" },
         { "type": "promise", "name": "another_promise" },
-        { "type": "time-tracker", "name": "time-track-second" },
-        { "type": "time-tracker", "name": "time-track" }
+        { "type": "time-tracker", "name": "time-track" },
+        { "type": "time-span", "name": "time-track-span" }
     ]
 })
     .on({
@@ -48,28 +48,19 @@ atst = new pro_appenders().set({
         }
     })
     .on({
-        "name": "time-track-second", "event": "start", "callback": json_data => {
+        "name": "time-track-span", "event": "start", "callback": json_data => {
             console.log('time start json(' + JSON.stringify(json_data) + ')')
         }
     })
     .on({
-        "name": "time-track-second", "event": "stop", "callback": json_data => {
+        "name": "time-track-span", "event": "stop", "callback": json_data => {
             console.log('time stop json(' + JSON.stringify(json_data) + ')')
-            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-second"], "message": "another_promise test done" }) })
+            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-span"], "message": "another_promise test done" }) })
         }
     })
 
-atst.do({ "name": "time-track-second", "event": "start", "message": "start" })
+atst.do({ "name": "time-track-span", "event": "start", "message": "start" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
-
-class testClass {
-    test_function() {
-        //since this will go to console you have to specify the class/function name.
-        atst.log.debug('testClass.test_function').tagline()
-    }
-}
-
-tcf = new testClass
 
 setTimeout(function () {
 
@@ -79,9 +70,8 @@ setTimeout(function () {
         atst.do({ "name": "time-track", "event": "stop", "message": "stop" })
         setTimeout(function () {
             try {
-                tcf.test_function() //show how the debug will log the name of the class/function
                 //some other processing is done. When finished stop the second timer
-                atst.do({ "name": "time-track-second", "event": "stop", "message": "stop" })
+                atst.do({ "name": "time-track-span", "event": "stop", "message": "stop" })
             } catch (e) {
                 atst.do({ "name": "another_promise", "event": "reject", "message": e.message })
             }

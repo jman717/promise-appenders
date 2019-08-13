@@ -14,8 +14,8 @@ atst = new pro_appenders().set({
         { "type": "log4js-tagline", "name": "logging" },
         { "type": "promise", "name": "a_promise" },
         { "type": "promise", "name": "another_promise" },
-        { "type": "time-tracker", "name": "time-track-second" },
-        { "type": "time-tracker", "name": "time-track" }
+        { "type": "time-tracker", "name": "time-track" },
+        { "type": "time-span", "name": "time-track-span" }
     ]
 })
     .on({
@@ -94,19 +94,19 @@ atst = new pro_appenders().set({
         }
     })
     .on({
-        "name": "time-track-second", "event": "start", "callback": json_data => {
+        "name": "time-track-span", "event": "start", "callback": json_data => {
             log.debug('time start json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
     .on({
-        "name": "time-track-second", "event": "stop", "callback": json_data => {
+        "name": "time-track-span", "event": "stop", "callback": json_data => {
             log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
-            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-second"], "message": "another_promise test done" }) })
+            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-span"], "message": "another_promise test done" }) })
         }
     })
 
 atst.do({ "name": "logging", "event": "init", "message": "init" })
-    .do({ "name": "time-track-second", "event": "start", "message": "start" })
+    .do({ "name": "time-track-span", "event": "start", "message": "start" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
 
 class testClass {
@@ -127,11 +127,11 @@ setTimeout(function () {
             try {
                 tcf.test_function() //show how the debug will log the name of the class/function
                 //some other processing is done. When finished stop the second timer
-                atst.do({ "name": "time-track-second", "event": "stop", "message": "stop" })
+                atst.do({ "name": "time-track-span", "event": "stop", "message": "stop" })
             } catch (e) {
                 atst.do({ "name": "another_promise", "event": "reject", "message": e.message })
             }
-        }, 800)
+        }, 1000)
         //throw new Error('some error thrown here')
         //atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": ["a_promise", "time-track"], "message": "a_promise test done"})})
         atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": "all", "message": "a_promise test done with all parameter" }) })  //include: all will give you all summaries
@@ -139,5 +139,5 @@ setTimeout(function () {
     } catch (e) {
         atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
     }
-}, 1500)
+}, 2000)
 

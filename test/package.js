@@ -11,7 +11,8 @@ const packageMock = {
     "colors": "*",
     "log4js-tagline": "^2.3.0",
     "mocha": "^6.2.0",
-    "sinon": "^7.4.1"
+    "sinon": "^7.4.1",
+    "time-span": "^3.1.0"
   },
   "scripts": {
     "start": "node app.js",
@@ -40,7 +41,7 @@ const packageMock = {
   "main": "app.js",
   "name": "promise-appenders",
   "start": "node app.js",
-  "version": "1.2.0"
+  "version": "1.3.0"
 }
 
 describe('package.json', function () {

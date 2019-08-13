@@ -6,7 +6,8 @@ Included appenders:
 * promise - a basic promise
 * log4js-tagline - log to file, console, to datadog
 * environment - define what environment you're dealing with (example: test, stage, or production)
-* time-tracker - Start the timer, stop the timer. How long does it take to complete a task, a loop, a process.
+* time-tracker - Start the timer, stop the timer. How many seconds does it take to complete a task, a loop, a process.
+* time-span - Start the timer, stop the timer. A more precise measurement of time: seconds, milliseconds, nanoseconds are all included.
 
 Installation
 ---------
@@ -34,15 +35,14 @@ Usage
 var colors = require('colors'),
     pro_appenders = require('promise-appenders'),
     log, lne, cfu, tcf
-
 atst = new pro_appenders().set({
     "appenders": [
         { "type": "environment", "name": "test" },
         { "type": "log4js-tagline", "name": "logging" },
         { "type": "promise", "name": "a_promise" },
         { "type": "promise", "name": "another_promise" },
-        { "type": "time-tracker", "name": "time-track-second" },
-        { "type": "time-tracker", "name": "time-track" }
+        { "type": "time-tracker", "name": "time-track" },
+        { "type": "time-span", "name": "time-track-span" }
     ]
 })
     .on({
@@ -121,19 +121,19 @@ atst = new pro_appenders().set({
         }
     })
     .on({
-        "name": "time-track-second", "event": "start", "callback": json_data => {
+        "name": "time-track-span", "event": "start", "callback": json_data => {
             log.debug('time start json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
         }
     })
     .on({
-        "name": "time-track-second", "event": "stop", "callback": json_data => {
+        "name": "time-track-span", "event": "stop", "callback": json_data => {
             log.debug('time stop json(' + JSON.stringify(json_data) + ')').tag(lne).tagline()
-            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-second"], "message": "another_promise test done" }) })
+            atst.do({ "name": "another_promise", "event": "resolve", "message": atst.getSummary({ "include": ["another_promise", "time-track-span"], "message": "another_promise test done" }) })
         }
     })
 
 atst.do({ "name": "logging", "event": "init", "message": "init" })
-    .do({ "name": "time-track-second", "event": "start", "message": "start" })
+    .do({ "name": "time-track-span", "event": "start", "message": "start" })
     .do({ "name": "time-track", "event": "start", "message": "start" })
 
 class testClass {
@@ -154,11 +154,11 @@ setTimeout(function () {
             try {
                 tcf.test_function() //show how the debug will log the name of the class/function
                 //some other processing is done. When finished stop the second timer
-                atst.do({ "name": "time-track-second", "event": "stop", "message": "stop" })
+                atst.do({ "name": "time-track-span", "event": "stop", "message": "stop" })
             } catch (e) {
                 atst.do({ "name": "another_promise", "event": "reject", "message": e.message })
             }
-        }, 800)
+        }, 1000)
         //throw new Error('some error thrown here')
         //atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": ["a_promise", "time-track"], "message": "a_promise test done"})})
         atst.do({ "name": "a_promise", "event": "resolve", "message": atst.getSummary({ "include": "all", "message": "a_promise test done with all parameter" }) })  //include: all will give you all summaries
@@ -166,7 +166,7 @@ setTimeout(function () {
     } catch (e) {
         atst.do({ "name": "a_promise", "event": "reject", "message": e.message })
     }
-}, 1500)  
+}, 2000)  
 
 ....
 ```
@@ -174,18 +174,16 @@ setTimeout(function () {
 Expected my.log file output sample
 ---------
 ```
-[2019-08-12T10:38:33.722] [info] myLog - (msg: this is an info line) lne(init_callback(): promise-appenders/test.js:55:17)
-[2019-08-12T10:38:33.725] [error] myLog - (msg: error line goes here) error(log4js_tagline.callback: Some error is thrown here.) lne(init_callback(): promise-appenders/test.js:59:21)
-[2019-08-12T10:38:33.729] [debug] myLog - (msg: time start json({"time":{"name":"time-track-second","data":{"start":"8/12/2019 10:38:33","stop":"","seconds":""}}})) lne(start_callback(): promise-appenders/test.js:98:17)
-[2019-08-12T10:38:33.730] [debug] myLog - (msg: time start json({"time":{"name":"time-track","data":{"start":"8/12/2019 10:38:33","stop":"","seconds":""}}})) lne(start_callback(): promise-appenders/test.js:88:17)
-[2019-08-12T10:38:35.244] [info] myLog - (msg: This is start of test)
-[2019-08-12T10:38:35.246] [debug] myLog - (msg: time stop json({"time":{"name":"time-track","data":{"start":"8/12/2019 10:38:33","stop":"8/12/2019 10:38:35","seconds":2}}})) lne(stop_callback(): promise-appenders/test.js:93:17)
-[2019-08-12T10:38:35.248] [info] myLog - (msg: This is the end of test)
-[2019-08-12T10:38:35.251] [info] myLog - (msg: promise resolve json({"success":[{"message":"a_promise test done with all parameter"},{"environment":"test"},{"logging":"log4js-tagline"},{"name":"a_promise","type":"promise"},{"name":"another_promise","type":"promise"},{"time":{"name":"time-track-second","data":{"start":"8/12/2019 10:38:33","stop":"","seconds":""}}},{"time":{"name":"time-track","data":{"start":"8/12/2019 10:38:33","stop":"8/12/2019 10:38:35","seconds":2}}}]})) lne(resolve_callback(): promise-appenders/test.js:83:17)
-[2019-08-12T10:38:36.063] [debug] myLog - (msg: This will display the class/function name.) class/function name(testClass.test_function)
-[2019-08-12T10:38:36.065] [debug] myLog - (msg: time stop json({"time":{"name":"time-track-second","data":{"start":"8/12/2019 10:38:33","stop":"8/12/2019 10:38:36","seconds":3}}})) lne(stop_callback(): promise-appenders/test.js:103:17)
-[2019-08-12T10:38:36.067] [mark] myLog - (msg: promise resolve json({"success":[{"message":"another_promise test done"},{"name":"another_promise","type":"promise"},{"time":{"name":"time-track-second","data":{"start":"8/12/2019 10:38:33","stop":"8/12/2019 10:38:36","seconds":3}}}]})) lne(resolve_callback(): promise-appenders/test.js:73:17)
-
-
+[2019-08-13T14:05:18.344] [info] myLog - (msg: this is an info line) lne(init_callback(): promise-appenders/test.js:55:17)
+[2019-08-13T14:05:18.347] [error] myLog - (msg: error line goes here) error(log4js_tagline.callback: Some error is thrown here.) lne(init_callback(): promise-appenders/test.js:59:21)
+[2019-08-13T14:05:18.351] [debug] myLog - (msg: time start json({"time":{"name":"time-track-span","data":{"start":[617755,914044300],"stop":"","seconds":"","milliseconds":"","nanoseconds":""}}})) lne(start_callback(): promise-appenders/test.js:98:17)
+[2019-08-13T14:05:18.353] [debug] myLog - (msg: time start json({"time":{"name":"time-track","data":{"start":"8/13/2019 14:5:18","stop":"","seconds":""}}})) lne(start_callback(): promise-appenders/test.js:88:17)
+[2019-08-13T14:05:20.371] [info] myLog - (msg: This is start of test)
+[2019-08-13T14:05:20.374] [debug] myLog - (msg: time stop json({"time":{"name":"time-track","data":{"start":"8/13/2019 14:5:18","stop":"8/13/2019 14:5:20","seconds":2}}})) lne(stop_callback(): promise-appenders/test.js:93:17)
+[2019-08-13T14:05:20.376] [info] myLog - (msg: This is the end of test)
+[2019-08-13T14:05:20.378] [info] myLog - (msg: promise resolve json({"success":[{"message":"a_promise test done with all parameter"},{"environment":"test"},{"logging":"log4js-tagline"},{"name":"a_promise","type":"promise"},{"name":"another_promise","type":"promise"},{"time":{"name":"time-track","data":{"start":"8/13/2019 14:5:18","stop":"8/13/2019 14:5:20","seconds":2}}},{"time":{"name":"time-track-span","data":{"start":[617755,914044300],"stop":"","seconds":"","milliseconds":"","nanoseconds":""}}}]})) lne(resolve_callback(): promise-appenders/test.js:83:17)
+[2019-08-13T14:05:21.388] [debug] myLog - (msg: This will display the class/function name.) class/function name(testClass.test_function)
+[2019-08-13T14:05:21.396] [debug] myLog - (msg: time stop json({"time":{"name":"time-track-span","data":{"start":[617755,914044300],"stop":[617758,952748299],"seconds":3.039076,"milliseconds":3041,"nanoseconds":3041747800}}})) lne(stop_callback(): promise-appenders/test.js:103:17)
+[2019-08-13T14:05:21.401] [mark] myLog - (msg: promise resolve json({"success":[{"message":"another_promise test done"},{"name":"another_promise","type":"promise"},{"time":{"name":"time-track-span","data":{"start":[617755,914044300],"stop":[617758,952748299],"seconds":3.039076,"milliseconds":3041,"nanoseconds":3041747800}}}]})) lne(resolve_callback(): promise-appenders/test.js:73:17)
 
 ```
