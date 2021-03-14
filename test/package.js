@@ -8,11 +8,11 @@ const packageMock = {
   },
   "bundleDependencies": false,
   "dependencies": {
-    "colors": "*",
-    "log4js-tagline": "^2.3.1",
-    "mocha": "^6.2.0",
-    "sinon": "^7.4.1",
-    "time-span": "^3.1.0"
+    "colors": "^1.4.0",
+    "log4js-tagline": "^2.3.8",
+    "mocha": "^8.3.2",
+    "sinon": "^9.2.4",
+    "time-span": "^4.0.0"
   },
   "scripts": {
     "start": "node app.js",
@@ -41,7 +41,7 @@ const packageMock = {
   "main": "app.js",
   "name": "promise-appenders",
   "start": "node app.js",
-  "version": "1.3.1"
+  "version": "1.3.3"
 }
 
 describe('package.json', function () {
