@@ -2,12 +2,12 @@
   "author": {
     "name": "Jim Manton"
   },
-  "version": "1.3.5",
+  "version": "1.3.6",
   "bundleDependencies": [],
   "dependencies": {
     "colors": "^1.4.0",
     "compare-json-difference": "^0.1.3",
-    "log4js-tagline": "^5.3.29",
+    "log4js-tagline": "^5s.3.29",
     "mocha": "^11.7.5",
     "sinon": "^9.2.4",
     "time-span": "^4.0.0"
