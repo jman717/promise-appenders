@@ -1,11 +1,11 @@
-
-Extend the functionality of promises with configurable appenders.
 [![npm Package](https://img.shields.io/npm/v/promise-appenders.svg)](https://www.npmjs.org/package/promise-appenders)
 [![License](https://img.shields.io/npm/l/promise-appenders.svg)](https://github.com/jman717/promise-appenders/blob/master/LICENSE)
 [![CodeQL](https://github.com/jman717/promise-appenders/actions/workflows/github-actions.yml/badge.svg)](https://github.com/jman717/promise-appenders/blob/main/.github/workflows/github-actions.yml)
 [![Node.js CI](https://github.com/jman717/promise-appenders/actions/workflows/node.js.yml/badge.svg)](https://github.com/jman717/promise-appenders/actions/workflows/node.js.yml)
 
 [![NPM](https://nodei.co/npm/promise-appenders.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/promise-appenders/)
+
+Extend the functionality of promises with configurable appenders.
 
 Included appenders:
 
