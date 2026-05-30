@@ -21,12 +21,6 @@ Installation
 npm install promise-appendure
 ```
 
-Mocha Test
----------
-```
-npm test
-```
-
 General Setup Test
 ---------
 ```
