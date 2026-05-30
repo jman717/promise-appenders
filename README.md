@@ -24,8 +24,8 @@ npm install promise-appendure
 General Setup Test
 ---------
 ```
-node test
 node test2
+node test3
 ```
 
 Usage
