@@ -66,5 +66,5 @@ jobs:
       run: npm ls --depth=0 --dev && npm ls --depth=0 --prod
 
     - run: npm run build --if-present
-    - run: npm test2
-    - run: npm test3
+    - run: node test2
+    - run: node test3
